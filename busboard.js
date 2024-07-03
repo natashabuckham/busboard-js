@@ -48,6 +48,17 @@ async function outputStopPoints(postcode) {
     console.log(data);
 };
 
+//convert stop ids to stoppoint ids
+async function convertToStopPointId(stopId) {
+    try {
+        const response = await fetch(`https://api.tfl.gov.uk/StopPoint/${stopId}`);
+        const data = await response.json();
+        return data.lineGroup[0].naptanIdReference;
+    } catch(error) {
+        console.error('Error fetching data:', error);
+    };
+};
+
 //get arrivals data
 async function fetchArrivalsData(busStopCode) {
     try {
@@ -76,6 +87,7 @@ async function printNext5Buses(busStopCode) {
 
     for (let i = 0; i < data.length; i++) {
         let busNumber = data[i].lineId;
+        console.log(busNumber)
         let timestamp = Date.parse(data[i].expectedArrival);
         let formattedTime = new Date(timestamp);
 
@@ -94,6 +106,21 @@ async function printNext5Buses(busStopCode) {
     };
 };
 
+//print next five buses for the two nearest stops
+async function twoNearestStopsBuses(postcode) {
+    const data = await fetchStopPointsByArea(postcode);
+    const stopOneCode = await convertToStopPointId(data.stopPoints[0].naptanId);
+    const stopOneName = data.stopPoints[0].commonName;
+    const stopTwoCode = await convertToStopPointId(data.stopPoints[1].naptanId);
+    const stopTwoName = data.stopPoints[1].commonName;
+
+    console.log(`Your two nearest stops are ${stopOneName} and ${stopTwoName}.`);
+    console.log(`The first bus stop code is ${stopOneCode}`);
+    // printNext5Buses(stopOneCode);
+    // console.log(`The next five buses to arrive at ${stopTwoName} are:
+    //     ${await printNext5Buses(stopTwoCode)}`);
+}
+
 //ask user for a postcode
 let postcode = readlineSync.question('Please enter a postcode:');
-outputStopPoints(postcode);
+twoNearestStopsBuses(postcode);
