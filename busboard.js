@@ -87,7 +87,6 @@ async function printNext5Buses(busStopCode) {
 
     for (let i = 0; i < data.length; i++) {
         let busNumber = data[i].lineId;
-        console.log(busNumber)
         let timestamp = Date.parse(data[i].expectedArrival);
         let formattedTime = new Date(timestamp);
 
@@ -115,11 +114,11 @@ async function twoNearestStopsBuses(postcode) {
     const stopTwoName = data.stopPoints[1].commonName;
 
     console.log(`Your two nearest stops are ${stopOneName} and ${stopTwoName}.`);
-    console.log(`The first bus stop code is ${stopOneCode}`);
-    // printNext5Buses(stopOneCode);
-    // console.log(`The next five buses to arrive at ${stopTwoName} are:
-    //     ${await printNext5Buses(stopTwoCode)}`);
-}
+    console.log(`The next five buses to arrive at ${stopOneName} are:`);
+    await printNext5Buses(stopOneCode);
+    console.log(`The next five buses to arrive at ${stopTwoName} are:`);
+    await printNext5Buses(stopTwoCode);
+};
 
 //ask user for a postcode
 let postcode = readlineSync.question('Please enter a postcode:');
