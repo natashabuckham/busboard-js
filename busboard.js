@@ -35,16 +35,16 @@ async function printNext5Buses() {
         timesToSort.push({number: busNumber, formatted: formattedTime, time: timestamp});
     };
     
-    let sortedTimes = () => timesToSort.sort((a, b) => {return a.time - b.time})
-
-    console.log(timesToSort);
-    console.log(sortedTimes());
-    // console.log(data);
+    let sortedTimesFunction = () => timesToSort.sort((a, b) => {return a.time - b.time})
     
-    // let arrivalTime = dateTime.toLocaleTimeString('en-GB');
-    // let arrivalDate = dateTime.toLocaleDateString('en-GB');
+    let sortedTimes = sortedTimesFunction();
 
-    // console.log(`Bus number ${busNumber} will arrive at ${arrivalTime} on ${arrivalDate}.`);
+    for (let i = 0; i < 5; i++) {
+        let number = sortedTimes[i].number;
+        let time = sortedTimes[i].formatted.toLocaleTimeString('en-GB');
+        let date = sortedTimes[i].formatted.toLocaleDateString('en-GB');
+        console.log(`Bus number ${number} will arrive at ${time} on ${date}.`);
+    };
 }
 
 
