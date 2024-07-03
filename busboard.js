@@ -1,13 +1,9 @@
-//fetch("https://api.tfl.gov.uk/StopPoint/490008660N/Arrivals")
-//    .then(response => response.json())
-//    .then(body => console.log(body));
+const readlineSync = require('readline-sync');
 
-
-
-
-async function fetchData(URLlink) {
+//get data
+async function fetchData(busStopCode) {
     try {
-        const response = await fetch(URLlink);
+        const response = await fetch(`https://api.tfl.gov.uk/StopPoint/${busStopCode}/Arrivals`);
         const data = await response.json();
         return data;
     } catch (error) {
@@ -15,6 +11,7 @@ async function fetchData(URLlink) {
     }
 }
 
+//output data
 async function outputData() {
     const data = await fetchData();
 
@@ -24,10 +21,9 @@ async function outputData() {
     console.log(data)
 }
 
-
-
-async function printNext5Buses() {
-    const data = await fetchData();
+//print next five buses
+async function printNext5Buses(busStopCode) {
+    const data = await fetchData(busStopCode);
     let timesToSort = [];
 
     for (let i = 0; i < data.length; i++) {
@@ -50,23 +46,20 @@ async function printNext5Buses() {
     };
 }
 
+// var busStopCode = 0;
 
-/////////////////////
+// const readline = require('node:readline');
+// const { stdin: input, stdout: output } = require('node:process');
 
-var busStopCode = 0;
-
-const readline = require('node:readline');
-const { stdin: input, stdout: output } = require('node:process');
-
-const rl = readline.createInterface({ input, output });
+// const rl = readline.createInterface({ input, output });
   
-  rl.question('What is the bus stop code?', busStopCode => {
-    console.log(`the bus stop code is:, ${busStopCode}`);
-    rl.close();
-  });
+//   rl.question('What is the bus stop code?', busStopCode => {
+//     console.log(`the bus stop code is:, ${busStopCode}`);
+//     rl.close();
+//   });
 
-const URLlink = `https://api.tfl.gov.uk/StopPoint/${busStopCode}/Arrivals`;
+// const URLlink = `https://api.tfl.gov.uk/StopPoint/${busStopCode}/Arrivals`;
 
-console.log(URLlink)
-
-printNext5Buses() ;
+// console.log(URLlink)
+let busStopCode = readlineSync.question('Please enter the bus stop code:');
+printNext5Buses(busStopCode);
