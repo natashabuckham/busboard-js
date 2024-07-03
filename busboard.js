@@ -1,5 +1,26 @@
 const readlineSync = require('readline-sync');
 
+//get latitude and longitude of a given postcode
+async function fetchPostcodeData(postcode) {
+    try {
+        const response = await fetch(`https://api.postcodes.io/postcodes/${postcode}`);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching data: ', error);
+    };
+};
+
+//output postcode data
+async function outputPostcodeData(postcode) {
+    const data = await fetchPostcodeData(postcode);
+
+    if (!data) {
+        return;
+    }
+    console.log(data);
+};
+
 //get list of stop points from latitude and longitude
 //return their naptanId (busStopCode)
 //start with radius of 500m then if that returns no stops, try again with increased radius of 100m each time until no longer returning no stops
@@ -13,7 +34,7 @@ async function fetchStopPointsByArea(lat, lon) {
     };
 };
 
-//output data
+//output bus stops data
 async function outputStopPoints(lat, lon) {
     const data = await fetchStopPointsByArea(lat, lon);
 
@@ -23,7 +44,7 @@ async function outputStopPoints(lat, lon) {
     console.log(data);
 };
 
-//get data
+//get arrivals data
 async function fetchArrivalsData(busStopCode) {
     try {
         const response = await fetch(`https://api.tfl.gov.uk/StopPoint/${busStopCode}/Arrivals`);
@@ -34,7 +55,7 @@ async function fetchArrivalsData(busStopCode) {
     };
 };
 
-//output data
+//output arrivals data
 async function outputData(busStopCode) {
     const data = await fetchArrivalsData(busStopCode);
 
@@ -68,8 +89,7 @@ async function printNext5Buses(busStopCode) {
         console.log(`Bus number ${number} will arrive at ${time} on ${date}.`);
     };
 };
-//Ask user for postcode
-// let postcode = readlineSync.question('Please enter a postcode:');
-// printNext5Buses(busStopCode);
 
-outputStopPoints(51.566699, -0.098956);
+//ask user for a postcode
+let postcode = readlineSync.question('Please enter a postcode:');
+outputPostcodeData(postcode);
