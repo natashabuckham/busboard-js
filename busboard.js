@@ -22,8 +22,7 @@ async function outputPostcodeData(postcode) {
 };
 
 //get list of stop points from latitude and longitude
-//return their naptanId (busStopCode)
-//start with radius of 500m then if that returns no stops, try again with increased radius of 100m each time until no longer returning no stops
+//TO DO: start with radius of 500m then if that returns no stops, try again with increased radius of 100m each time until no longer returning no stops
 async function fetchStopPointsByArea(postcode) {
     const postcodeData = await fetchPostcodeData(postcode);
     const lat = postcodeData.result.latitude;
@@ -81,6 +80,7 @@ async function outputData(busStopCode) {
 };
 
 //print next five buses
+//TO DO: console.log a message if there are no upcoming buses
 async function printNext5Buses(busStopCode) {
     const data = await fetchArrivalsData(busStopCode);
     let timesToSort = [];
@@ -121,5 +121,6 @@ async function twoNearestStopsBuses(postcode) {
 };
 
 //ask user for a postcode
+//TO DO: validate postcode and give feedback for invalid postcode
 let postcode = readlineSync.question('Please enter a postcode:');
 twoNearestStopsBuses(postcode);
