@@ -24,7 +24,11 @@ async function outputPostcodeData(postcode) {
 //get list of stop points from latitude and longitude
 //return their naptanId (busStopCode)
 //start with radius of 500m then if that returns no stops, try again with increased radius of 100m each time until no longer returning no stops
-async function fetchStopPointsByArea(lat, lon) {
+async function fetchStopPointsByArea(postcode) {
+    const postcodeData = await fetchPostcodeData(postcode);
+    const lat = postcodeData.result.latitude;
+    const lon = postcodeData.result.longitude;
+
     try {
         const response = await fetch(`https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=NaptanBusCoachStation,NaptanBusWayPoint,NaptanOnstreetBusCoachStopCluster,NaptanOnstreetBusCoachStopPair,NaptanPublicBusCoachTram&radius=500&modes=bus`);
         const data = await response.json();
@@ -35,8 +39,8 @@ async function fetchStopPointsByArea(lat, lon) {
 };
 
 //output bus stops data
-async function outputStopPoints(lat, lon) {
-    const data = await fetchStopPointsByArea(lat, lon);
+async function outputStopPoints(postcode) {
+    const data = await fetchStopPointsByArea(postcode);
 
     if (!data) {
         return;
@@ -92,4 +96,4 @@ async function printNext5Buses(busStopCode) {
 
 //ask user for a postcode
 let postcode = readlineSync.question('Please enter a postcode:');
-outputPostcodeData(postcode);
+outputStopPoints(postcode);
