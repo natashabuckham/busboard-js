@@ -2,9 +2,12 @@
 //    .then(response => response.json())
 //    .then(body => console.log(body));
 
-async function fetchData() {
+
+
+
+async function fetchData(URLlink) {
     try {
-        const response = await fetch("https://api.tfl.gov.uk/StopPoint/490008660N/Arrivals");
+        const response = await fetch(URLlink);
         const data = await response.json();
         return data;
     } catch (error) {
@@ -49,4 +52,21 @@ async function printNext5Buses() {
 
 
 /////////////////////
+
+var busStopCode = 0;
+
+const readline = require('node:readline');
+const { stdin: input, stdout: output } = require('node:process');
+
+const rl = readline.createInterface({ input, output });
+  
+  rl.question('What is the bus stop code?', busStopCode => {
+    console.log(`the bus stop code is:, ${busStopCode}`);
+    rl.close();
+  });
+
+const URLlink = `https://api.tfl.gov.uk/StopPoint/${busStopCode}/Arrivals`;
+
+console.log(URLlink)
+
 printNext5Buses() ;
