@@ -27,12 +27,13 @@ async function printNext5Buses() {
     const data = await fetchData();
     let timesToSort = [];
 
-    for (let i = 0; i < 5; i++) {
-        let busNumber = body[i].lineId;
-        let dateTime = new Date(Date.parse(body[i].expectedArrival))
-        timesToSort.push({[body[i].lineId]: dateTime});
+    for (let i = 0; i < data.length; i++) {
+        let busNumber = data[i].lineId;
+        let dateTime = new Date(Date.parse(data[i].expectedArrival))
+        timesToSort.push({[data[i].lineId]: dateTime});
+
     };
-    console.log(body);
+    console.log(data);
     console.log(timesToSort);
     // let arrivalTime = dateTime.toLocaleTimeString('en-GB');
     // let arrivalDate = dateTime.toLocaleDateString('en-GB');
@@ -42,4 +43,4 @@ async function printNext5Buses() {
 
 
 /////////////////////
-outputData() ;
+printNext5Buses() ;
