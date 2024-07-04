@@ -84,7 +84,8 @@ async function printNext5Buses(busStopCode) {
     const data = await fetchArrivalsData(busStopCode);
     let timesToSort = [];
 
-    //TO DO: console.log a message if there are no upcoming buses
+    //console.log a message if there are no upcoming 
+    //need to know how the data is formatted when there is no upcoming buses
     if (data.length==0) {
         console.log('There are no upcoming buses')
         return;
@@ -111,7 +112,7 @@ async function printNext5Buses(busStopCode) {
     };
 
     if (data.length<5) {
-        console.log('There are only ${data.length} upcoming buses!')
+        console.log(`There are only ${data.length} upcoming buses!`)
     }
 };
 
