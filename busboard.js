@@ -28,7 +28,6 @@ async function outputPostcodeData(postcode) {
 
 //get list of stop points from latitude and longitude
 //start with radius of 500m then if that returns no stops, try again with increased radius of 100m each time until no longer returning no stops
-//TO DO : stop the search of nearby bus stops if radius exceeds a certain value (such as 1000m)
 async function fetchStopPointsByArea(postcode) {
     const postcodeData = await fetchPostcodeData(postcode);
     const lat = postcodeData.result.latitude;
@@ -151,14 +150,38 @@ async function twoNearestStopsBuses(postcode) {
     await printNext5Buses(stopTwoCode);
 };
 
+
+async function fetchJourneyData(departurePoint,arrivalPoint) {
+    try {
+        const response = await fetch(`https://api.tfl.gov.uk/Journey/JourneyResults/${departurePoint}/to/${arrivalPoint}?mode=walking`);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching data: ', error);
+        throw error;
+    };
+};
+
+async function outputJourneyData(departurePoint, arrivalPoint) {
+    const data = await fetchJourneyData(departurePoint, arrivalPoint);
+
+    if (!data) {
+        return;
+    }
+    console.log(data.journeys.legs);
+};
+
+
+
+
 //ask user for a postcode, validate postcode and give feedback for invalid postcode format
-let postcode = readlineSync.question('Please enter a postcode:');
-let isPostCode = postcode.match(/^[a-z]{1,2}\d[a-z\d]?\s*\d[a-z]{2}$/i);   // Regex found on https://ideal-postcodes.co.uk/guides/postcode-validation
+// let postcode = readlineSync.question('Please enter a postcode:');
+// let isPostCode = postcode.match(/^[a-z]{1,2}\d[a-z\d]?\s*\d[a-z]{2}$/i);   // Regex found on https://ideal-postcodes.co.uk/guides/postcode-validation
 
-if (isPostCode) {
-    twoNearestStopsBuses(postcode);
-}else {
-    console.log('This is not a correct postcode format. Try again.')
-}
+// if (isPostCode) {
+//     twoNearestStopsBuses(postcode);
+// }else {
+//     console.log('This is not a correct postcode format. Try again.')
+// }
 
-
+outputJourneyData('n42az','nw51tl');
