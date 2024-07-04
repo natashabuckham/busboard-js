@@ -80,10 +80,15 @@ async function outputData(busStopCode) {
 };
 
 //print next five buses
-//TO DO: console.log a message if there are no upcoming buses
 async function printNext5Buses(busStopCode) {
     const data = await fetchArrivalsData(busStopCode);
     let timesToSort = [];
+
+    //TO DO: console.log a message if there are no upcoming buses
+    if (data.length==0) {
+        console.log('There are no upcoming buses')
+        return;
+    } 
 
     for (let i = 0; i < data.length; i++) {
         let busNumber = data[i].lineId;
@@ -97,12 +102,17 @@ async function printNext5Buses(busStopCode) {
     
     let sortedTimes = sortedTimesFunction();
 
-    for (let i = 0; i < 5; i++) {
+    //print the 5 next buses, or less if there are less than 5 upcoming buses
+    for (let i = 0; i < Math.min(5,data.length); i++) {
         let number = sortedTimes[i].number;
         let time = sortedTimes[i].formatted.toLocaleTimeString('en-GB');
         let date = sortedTimes[i].formatted.toLocaleDateString('en-GB');
         console.log(`Bus number ${number} will arrive at ${time} on ${date}.`);
     };
+
+    if (data.length<5) {
+        console.log('There are only ${data.length} upcoming buses!')
+    }
 };
 
 //print next five buses for the two nearest stops
