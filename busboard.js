@@ -44,11 +44,16 @@ async function fetchStopPointsByArea(postcode) {
             response = await fetch(`https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=NaptanBusCoachStation,NaptanBusWayPoint,NaptanOnstreetBusCoachStopCluster,NaptanOnstreetBusCoachStopPair,NaptanPublicBusCoachTram&radius=${radius}&modes=bus`);
             data = await response.json();
             console.log(data);
-            isEmpty = (data.stopPoints.length == 0);           
+            isEmpty = (data.stopPoints.length == 0); 
+            if (radius > 3000)
+                {
+                    throw 'No nearby bus stops found, please enter a different postcode.';
+                }          
         }
         return data;
     } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error(error);
+        throw error;
     };
 };
 
