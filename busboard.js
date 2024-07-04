@@ -27,16 +27,25 @@ async function outputPostcodeData(postcode) {
 };
 
 //get list of stop points from latitude and longitude
-//TO DO: start with radius of 500m then if that returns no stops, try again with increased radius of 100m each time until no longer returning no stops
+//start with radius of 500m then if that returns no stops, try again with increased radius of 100m each time until no longer returning no stops
+//TO DO : stop the search of nearby bus stops if radius exceeds a certain value (such as 1000m)
 async function fetchStopPointsByArea(postcode) {
     const postcodeData = await fetchPostcodeData(postcode);
-    console.log(postcodeData);
     const lat = postcodeData.result.latitude;
     const lon = postcodeData.result.longitude;
 
     try {
-        const response = await fetch(`https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=NaptanBusCoachStation,NaptanBusWayPoint,NaptanOnstreetBusCoachStopCluster,NaptanOnstreetBusCoachStopPair,NaptanPublicBusCoachTram&radius=500&modes=bus`);
-        const data = await response.json();
+        let radius = 500;
+        let response = await fetch(`https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=NaptanBusCoachStation,NaptanBusWayPoint,NaptanOnstreetBusCoachStopCluster,NaptanOnstreetBusCoachStopPair,NaptanPublicBusCoachTram&radius=${radius}&modes=bus`);
+        let data = await response.json();
+        isEmpty = (data.stopPoints.length == 0);
+        while (isEmpty) {      
+            radius += 100;
+            response = await fetch(`https://api.tfl.gov.uk/StopPoint/?lat=${lat}&lon=${lon}&stopTypes=NaptanBusCoachStation,NaptanBusWayPoint,NaptanOnstreetBusCoachStopCluster,NaptanOnstreetBusCoachStopPair,NaptanPublicBusCoachTram&radius=${radius}&modes=bus`);
+            data = await response.json();
+            console.log(data);
+            isEmpty = (data.stopPoints.length == 0);           
+        }
         return data;
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -129,8 +138,6 @@ async function twoNearestStopsBuses(postcode) {
     const stopOneName = data.stopPoints[0].commonName;
     const stopTwoCode = await convertToStopPointId(data.stopPoints[1].naptanId);
     const stopTwoName = data.stopPoints[1].commonName;
-
-
 
     console.log(`Your two nearest stops are ${stopOneName} and ${stopTwoName}.`);
     console.log(`The next five buses to arrive at ${stopOneName} are:`);
