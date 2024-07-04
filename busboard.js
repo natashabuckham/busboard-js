@@ -87,7 +87,7 @@ async function printNext5Buses(busStopCode) {
     //console.log a message if there are no upcoming 
     //need to know how the data is formatted when there is no upcoming buses
     if (data.length==0) {
-        console.log('There are no upcoming buses')
+        console.log('There are no upcoming buses');
         return;
     } 
 
@@ -112,7 +112,7 @@ async function printNext5Buses(busStopCode) {
     };
 
     if (data.length<5) {
-        console.log(`There are only ${data.length} upcoming buses!`)
+        console.log(`There are only ${data.length} upcoming buses!`);
     }
 };
 
@@ -124,6 +124,8 @@ async function twoNearestStopsBuses(postcode) {
     const stopTwoCode = await convertToStopPointId(data.stopPoints[1].naptanId);
     const stopTwoName = data.stopPoints[1].commonName;
 
+
+
     console.log(`Your two nearest stops are ${stopOneName} and ${stopTwoName}.`);
     console.log(`The next five buses to arrive at ${stopOneName} are:`);
     await printNext5Buses(stopOneCode);
@@ -131,7 +133,15 @@ async function twoNearestStopsBuses(postcode) {
     await printNext5Buses(stopTwoCode);
 };
 
-//ask user for a postcode
-//TO DO: validate postcode and give feedback for invalid postcode
+//ask user for a postcode, validate postcode and give feedback for invalid postcode format
 let postcode = readlineSync.question('Please enter a postcode:');
-twoNearestStopsBuses(postcode);
+
+let isPostCode = postcode.match(/^[a-z]{1,2}\d[a-z\d]?\s*\d[a-z]{2}$/i);   // Regex found on https://ideal-postcodes.co.uk/guides/postcode-validation
+
+if (isPostCode) {
+    twoNearestStopsBuses(postcode);
+}else {
+    console.log('This is not a correct postcode format. Try again.')
+}
+
+
