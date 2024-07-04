@@ -5,9 +5,14 @@ async function fetchPostcodeData(postcode) {
     try {
         const response = await fetch(`https://api.postcodes.io/postcodes/${postcode}`);
         const data = await response.json();
+        if (response.status != 200) {
+            throw data.error;
+        } else { 
         return data;
+        };
     } catch (error) {
         console.error('Error fetching data: ', error);
+        throw error;
     };
 };
 
@@ -25,6 +30,7 @@ async function outputPostcodeData(postcode) {
 //TO DO: start with radius of 500m then if that returns no stops, try again with increased radius of 100m each time until no longer returning no stops
 async function fetchStopPointsByArea(postcode) {
     const postcodeData = await fetchPostcodeData(postcode);
+    console.log(postcodeData);
     const lat = postcodeData.result.latitude;
     const lon = postcodeData.result.longitude;
 
@@ -135,7 +141,6 @@ async function twoNearestStopsBuses(postcode) {
 
 //ask user for a postcode, validate postcode and give feedback for invalid postcode format
 let postcode = readlineSync.question('Please enter a postcode:');
-
 let isPostCode = postcode.match(/^[a-z]{1,2}\d[a-z\d]?\s*\d[a-z]{2}$/i);   // Regex found on https://ideal-postcodes.co.uk/guides/postcode-validation
 
 if (isPostCode) {
