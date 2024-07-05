@@ -168,10 +168,26 @@ async function outputJourneyData(departurePoint, arrivalPoint) {
     if (!data) {
         return;
     }
-    console.log(data.journeys.legs);
+    console.log(data); 
 };
 
+async function getJourneyLegInstruction(departurePoint, arrivalPoint) {
+    const data = await fetchJourneyData(departurePoint, arrivalPoint);
 
+    if (!data) {
+        return;
+    }
+
+    //console.log(data.journeys[0].legs[0].instruction.steps[0].description); //we will need to iterate over i in data.journeys[0].legs[0].instruction.steps[i].description
+    //console.log(`length of data.journeys : ${data.journeys.length}`);
+
+    const steps = data.journeys[0].legs[0].instruction.steps;
+    //console.log(steps)
+
+    return steps;
+
+ 
+};
 
 
 //ask user for a postcode, validate postcode and give feedback for invalid postcode format
@@ -184,4 +200,8 @@ async function outputJourneyData(departurePoint, arrivalPoint) {
 //     console.log('This is not a correct postcode format. Try again.')
 // }
 
-outputJourneyData('n42az','nw51tl');
+//outputJourneyData('n42az','nw51tl');
+const instruction =  getJourneyLegInstruction('n42az','nw51tl');
+
+console.log('-----instruction data :');
+console.log(instruction);
