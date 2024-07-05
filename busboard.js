@@ -136,6 +136,9 @@ async function printNext5Buses(busStopCode) {
 };
 
 //print next five buses for the two nearest stops
+//refactor to reduce repetition
+//separate console.logs from data sorting?
+//function naming - what actions is the function doing?
 async function twoNearestStopsBuses(postcode) {
     const data = await fetchStopPointsByArea(postcode);
     const stopOneCode = await convertToStopPointId(data.stopPoints[0].naptanId);
@@ -207,6 +210,31 @@ async function getJourneyLegInstruction(postcode) {
 
 
 async function runProgram(postcode) {
+    //ask user for postcode of their location
+    //validate postcode
+        //if invalid - console log message and exit program
+    //if valid - 
+    //use postcode to get postcode data from postcode api
+    //process the postcode data to extract latitude and longitude of the postcode
+    //use latitude and longitude to find list of stops in a radius from tfl api
+        //if no stops returned - increase radius and get list of stops again
+        //stop after 3000m and console.log no stops found - exit program
+    //if stops found -
+    //get name and code data of first two stops in list - save stop names and codes in variables
+    //console.log the names of the two nearest stops
+        //REPEAT TWICE
+        //get all arrivals data for a bus stop
+        //sort arrivals data by arrival time and return first five
+        //console log the first five arrivals
+    //Ask user which bus stop they want directions to
+    //Validate their answer
+        //if invalid - give response and exit program
+    //if valid -
+    //assign arrival point from chosen bus stop
+    //get journey data from tfl api using postcode variable and arrival point
+    //extract 1.journey time 2.steps from journey data
+    //console.log journey time
+    //iterate through steps to console log the description heading and description for each step
     await twoNearestStopsBuses(postcode);
     await getJourneyLegInstruction(postcode);
 };
