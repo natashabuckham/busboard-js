@@ -174,19 +174,15 @@ async function outputJourneyData(departurePoint, arrivalPoint) {
 async function getJourneyLegInstruction(departurePoint, arrivalPoint) {
     const data = await fetchJourneyData(departurePoint, arrivalPoint);
 
-    if (!data) {
-        return;
-    }
-
-    //console.log(data.journeys[0].legs[0].instruction.steps[0].description); //we will need to iterate over i in data.journeys[0].legs[0].instruction.steps[i].description
-    //console.log(`length of data.journeys : ${data.journeys.length}`);
-
+    const journeyTime = data.journeys[0].duration;
     const steps = data.journeys[0].legs[0].instruction.steps;
-    //console.log(steps)
+    console.log(`It will take ${journeyTime} minutes to walk to your nearest stop. The directions are:`);
 
-    return steps;
-
- 
+    for (let i = 0; i < steps.length; i++) {
+        let descriptionHeading = data.journeys[0].legs[0].instruction.steps[i].descriptionHeading;
+        let description = data.journeys[0].legs[0].instruction.steps[i].description;
+        console.log(`Step ${i + 1}: ${descriptionHeading} ${description}`);
+    };
 };
 
 
@@ -200,8 +196,7 @@ async function getJourneyLegInstruction(departurePoint, arrivalPoint) {
 //     console.log('This is not a correct postcode format. Try again.')
 // }
 
-//outputJourneyData('n42az','nw51tl');
-const instruction =  getJourneyLegInstruction('n42az','nw51tl');
+//outputJourneyData('n42az','nw51tl'); 
 
 console.log('-----instruction data :');
-console.log(instruction);
+getJourneyLegInstruction('n42az','nw51tl');
