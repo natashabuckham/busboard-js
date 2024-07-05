@@ -150,6 +150,25 @@ async function twoNearestStopsBuses(postcode) {
     await printNext5Buses(stopTwoCode);
 };
 
+async function getArrivalPoint(postcode) {
+    const data = await fetchStopPointsByArea(postcode);
+    const stopOneCode = await convertToStopPointId(data.stopPoints[0].naptanId);
+    const stopOneName = data.stopPoints[0].commonName;
+    const stopTwoCode = await convertToStopPointId(data.stopPoints[1].naptanId);
+    const stopTwoName = data.stopPoints[1].commonName;
+
+    let busStopName = readlineSync.question(`Which bus stop do you want to go to: 1.${stopOneName} or 2.${stopTwoName}?\n`);
+    let busStopCode = undefined;
+    if (busStopName == "1" || stopOneName) {
+        busStopCode = stopOneCode;
+    } else if (busStopName == "2" || stopTwoName) {
+        busStopCode = stopTwoCode;
+    } else {
+        console.log("Didn't define bus stop code");
+    };
+    return (busStopCode);
+}
+
 
 async function fetchJourneyData(departurePoint,arrivalPoint) {
     try {
@@ -171,8 +190,9 @@ async function outputJourneyData(departurePoint, arrivalPoint) {
     console.log(data); 
 };
 
-async function getJourneyLegInstruction(departurePoint, arrivalPoint) {
-    const data = await fetchJourneyData(departurePoint, arrivalPoint);
+async function getJourneyLegInstruction(postcode) {
+    const arrivalPoint = await getArrivalPoint(postcode);
+    const data = await fetchJourneyData(postcode,arrivalPoint);
 
     const journeyTime = data.journeys[0].duration;
     const steps = data.journeys[0].legs[0].instruction.steps;
@@ -186,17 +206,17 @@ async function getJourneyLegInstruction(departurePoint, arrivalPoint) {
 };
 
 
+async function runProgram(postcode) {
+    await twoNearestStopsBuses(postcode);
+    await getJourneyLegInstruction(postcode);
+};
+
 //ask user for a postcode, validate postcode and give feedback for invalid postcode format
-// let postcode = readlineSync.question('Please enter a postcode:');
-// let isPostCode = postcode.match(/^[a-z]{1,2}\d[a-z\d]?\s*\d[a-z]{2}$/i);   // Regex found on https://ideal-postcodes.co.uk/guides/postcode-validation
+let postcode = readlineSync.question('Please enter a postcode:');
+let isPostCode = postcode.match(/^[a-z]{1,2}\d[a-z\d]?\s*\d[a-z]{2}$/i);   // Regex found on https://ideal-postcodes.co.uk/guides/postcode-validation
 
-// if (isPostCode) {
-//     twoNearestStopsBuses(postcode);
-// }else {
-//     console.log('This is not a correct postcode format. Try again.')
-// }
-
-//outputJourneyData('n42az','nw51tl'); 
-
-console.log('-----instruction data :');
-getJourneyLegInstruction('n42az','nw51tl');
+if (isPostCode) {
+    runProgram(postcode);
+}else {
+    console.log('This is not a correct postcode format. Try again.')
+};
